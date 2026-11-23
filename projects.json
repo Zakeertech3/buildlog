@@ -1,16 +1,20 @@
 [
   {
+    "name": "",
     "title": "Customer support agent that routes queries across models through Kong AI Gateway",
     "url": "https://github.com/Zakeertech3/Customer_Support_Agent_using_Kong",
-    "stack": ["Python", "FastAPI", "Kong AI Gateway", "Groq", "ChromaDB", "Streamlit"],
     "highlight": "simple queries go to Llama 3.3 70B, complex ones to GPT-OSS-120B, frustrated customers escalate to a CRM",
+    "stack": ["Python", "FastAPI", "Kong AI Gateway", "Groq", "ChromaDB", "Streamlit"],
+    "year": "",
     "demo": ""
   },
   {
+    "name": "",
     "title": "Slack agent that answers questions about a GitHub repo with file and line citations",
     "url": "https://github.com/Zakeertech3/code-rag-engine",
-    "stack": ["Python", "Qdrant", "BM25 + dense hybrid search", "Jina reranker", "tree-sitter", "Slack Bolt"],
     "highlight": "re-indexed on every push, hit rate 1.00 and MRR 0.955 on 11 eval questions",
+    "stack": ["Python", "Qdrant", "BM25 + dense hybrid search", "Jina reranker", "tree-sitter", "Slack Bolt"],
+    "year": "",
     "demo": ""
   }
 ]
