@@ -3,14 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>buildlog</title>
+<title>buildlog by Zakeer SMD</title>
 <meta name="description" content="Things I've built and shipped.">
+<link rel="canonical" href="https://buildlog-cs0.pages.dev/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ff6600'/%3E%3Crect x='3' y='3' width='26' height='26' fill='none' stroke='white' stroke-width='2'/%3E%3Ctext x='16' y='23' font-family='Verdana,sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="buildlog">
+<meta property="og:title" content="buildlog by Zakeer SMD">
+<meta property="og:description" content="Things I've built and shipped.">
+<meta property="og:url" content="https://buildlog-cs0.pages.dev/">
+<meta property="og:image" content="https://buildlog-cs0.pages.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="buildlog by Zakeer SMD">
+<meta name="twitter:description" content="Things I've built and shipped.">
+<meta name="twitter:image" content="https://buildlog-cs0.pages.dev/og.png">
 <style>
   :root {
     --accent: #ff6600;
     --page: #f6f6ef;
     --text: #000000;
-    --muted: #828282;
+    --muted: #5f5f5f;
+    --soft: #828282;
   }
   * { box-sizing: border-box; }
   body {
@@ -24,8 +39,11 @@
   .wrap {
     width: 85%;
     max-width: 1100px;
+    min-height: calc(100vh - 16px);
     margin: 0 auto;
     background: var(--page);
+    display: flex;
+    flex-direction: column;
   }
   header {
     display: flex;
@@ -47,6 +65,7 @@
   }
   .brand { font-weight: bold; color: var(--text); text-decoration: none; }
   .tagline { color: var(--text); }
+  main { flex: 1; }
   ol {
     margin: 0;
     padding: 10px 4px 14px 0;
@@ -57,42 +76,41 @@
     counter-increment: item;
     display: grid;
     grid-template-columns: 30px 1fr;
-    padding: 4px 0 6px;
+    padding: 5px 0 8px;
   }
   li::before {
     content: counter(item) ".";
-    color: var(--muted);
+    color: var(--soft);
     text-align: right;
     padding-right: 6px;
   }
+  .title { font-size: 10.5pt; }
   .title a { color: var(--text); text-decoration: none; }
-  .title a:visited { color: var(--muted); }
-  .site { color: var(--muted); font-size: 8pt; margin-left: 4px; }
+  .title a:hover { text-decoration: underline; }
+  .title .name { font-weight: bold; }
   .sub {
     grid-column: 2;
     color: var(--muted);
-    font-size: 7.5pt;
-    margin-top: 3px;
-    line-height: 1.5;
+    font-size: 8.5pt;
+    margin-top: 4px;
+    line-height: 1.6;
   }
-  .sub a { color: var(--muted); text-decoration: none; }
-  .sub a:hover { text-decoration: underline; }
+  .sub .result { color: #333333; }
+  .sub a { color: var(--muted); text-decoration: underline; }
   footer {
     border-top: 2px solid var(--accent);
     padding: 10px 4px 14px;
     text-align: center;
-    color: var(--muted);
+    color: var(--soft);
     font-size: 8pt;
   }
-  footer a { color: var(--muted); }
   .empty { padding: 10px 34px; color: var(--muted); }
   @media (max-width: 750px) {
     body { padding: 0; }
-    .wrap { width: 100%; }
+    .wrap { width: 100%; min-height: 100vh; }
     header .tagline { display: none; }
     .title { font-size: 11pt; }
-    .site { display: block; margin: 2px 0 0; }
-    .sub { font-size: 8.5pt; }
+    .sub { font-size: 9pt; }
   }
 </style>
 </head>
@@ -110,22 +128,11 @@
     <footer>Zakeer SMD</footer>
   </div>
 <script>
-  function siteOf(url) {
-    try {
-      const u = new URL(url);
-      const parts = u.pathname.split("/").filter(Boolean);
-      return u.hostname === "github.com" && parts.length ? "github.com/" + parts[0] : u.hostname.replace(/^www\./, "");
-    } catch (e) {
-      return "";
-    }
-  }
-
-  function link(href, text) {
-    const a = document.createElement("a");
-    a.href = href;
-    a.textContent = text;
-    a.rel = "noopener";
-    return a;
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text) node.textContent = text;
+    return node;
   }
 
   function render(projects) {
@@ -136,30 +143,38 @@
       return;
     }
     projects.forEach(function (p) {
-      const li = document.createElement("li");
+      const li = el("li");
 
-      const title = document.createElement("div");
-      title.className = "title";
-      title.appendChild(link(p.url, p.title));
-      const site = document.createElement("span");
-      site.className = "site";
-      site.textContent = "(" + siteOf(p.url) + ")";
-      title.appendChild(site);
+      const title = el("div", "title");
+      const a = el("a");
+      a.href = p.url;
+      a.rel = "noopener";
+      if (p.name) {
+        a.appendChild(el("span", "name", p.name));
+        a.appendChild(document.createTextNode(": " + p.title));
+      } else {
+        a.textContent = p.title;
+      }
+      title.appendChild(a);
 
-      const sub = document.createElement("div");
-      sub.className = "sub";
+      const sub = el("div", "sub");
       const bits = [];
+      if (p.highlight) bits.push(el("span", "result", p.highlight));
       if (p.stack && p.stack.length) bits.push(document.createTextNode(p.stack.join(" · ")));
-      if (p.highlight) bits.push(document.createTextNode(p.highlight));
-      bits.push(link(p.url, "repo"));
-      if (p.demo) bits.push(link(p.demo, "demo"));
+      if (p.year) bits.push(document.createTextNode(String(p.year)));
+      if (p.demo) {
+        const d = el("a", "", "demo");
+        d.href = p.demo;
+        d.rel = "noopener";
+        bits.push(d);
+      }
       bits.forEach(function (node, i) {
         if (i) sub.appendChild(document.createTextNode(" | "));
         sub.appendChild(node);
       });
 
       li.appendChild(title);
-      li.appendChild(sub);
+      if (bits.length) li.appendChild(sub);
       list.appendChild(li);
     });
   }
